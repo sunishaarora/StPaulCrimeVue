@@ -1,10 +1,13 @@
 <script>
 import $ from 'jquery'
+//import SearchResult from './components/SearchResult.vue'
+
 
 export default {
     data() {
         return {
             view: 'map',
+            userSearch: '',
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -86,6 +89,13 @@ export default {
                     }
                 });
             });
+        },
+        pressButton(){
+            this.buttonClick = true;
+            console.log(this.userSearch);
+        },
+        enter(){
+            console.log(this.userSearch);
         }
     },
     mounted() {
@@ -96,6 +106,8 @@ export default {
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
+        //var marker = L.marker([44.949203, -93.093739]).addTo(this.leaflet.mapmap);
+
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
@@ -109,7 +121,7 @@ export default {
             console.log('Error:', error);
         });
     }
-}
+}   
 </script>
 
 <template>
@@ -122,6 +134,11 @@ export default {
     </div>
     <div v-show="view === 'map'">
         <div class="grid-container">
+            <br />
+            <input id = 'InputID' v-model = "userSearch" placeholder="Search Here" />
+            <button onclick="document.getElementById('InputID').value = ''" type = 'button' class = 'button' @click="enter">Enter</button>
+
+
             <div class="grid-x grid-padding-x">
                 <div id="leafletmap" class="cell auto"></div>
             </div>
