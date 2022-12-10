@@ -48,6 +48,10 @@
     import $ from 'jquery'
 
     export default {
+        props: {
+            uploadMethod: () => {}
+        },
+
         data() {
             return {
                 data: {
@@ -68,32 +72,15 @@
                 if (this.data.case_number == "" || this.data.date == "" || this.data.time == "" || this.data.code == "" || this.data.incident == "" || this.data.police_grid == "" || this.data.neighborhood_number == "" || this.data.block == "") {
                     window.alert("Please fill out all fields in the form");
                 } else {
-                    this.uploadJSON("PUT", "http://localhost:8000/new-incident", this.data)
+                    this.uploadMethod("PUT", "http://localhost:8000/new-incident", this.data)
                     .then((res)=>{
                         window.alert("Submit new incident successful");
                     })
                     .catch((err)=>{
-                        window.alert("Error: " + err.message);
+                        console.log("There's an error!");
+                        window.alert("Something went wrong!");
                     })
                 }
-            },
-
-            uploadJSON(method, url, data) {
-                return new Promise((resolve, reject) => {
-                    $.ajax({
-                        type: method,
-                        url: url,
-                        contentType: 'application/json; charset=utf-8',
-                        data: JSON.stringify(data),
-                        dataType: 'text',
-                        success: (response) => {
-                            resolve(response);
-                        },
-                        error: (status, message) => {
-                            reject({status: status.status, message: status.statusText});
-                        }
-                    });
-                });
             }
         }
     }

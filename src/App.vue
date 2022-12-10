@@ -155,7 +155,7 @@ export default {
                 <h1 class="cell auto">New Incident Form</h1>
             </div>
             <div class="grid-x">
-                <NewIncidentFormVue/>
+                <NewIncidentFormVue :uploadMethod="uploadJSON"/>
             </div>
         </div>
     </div>
