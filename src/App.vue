@@ -1,9 +1,13 @@
 <script>
 import $ from 'jquery'
+import NewIncidentFormVue from '../components/NewIncidentForm.vue';
 //import SearchResult from './components/SearchResult.vue'
 
-
 export default {
+    components: {
+        NewIncidentFormVue
+    },
+
     data() {
         return {
             view: 'map',
@@ -183,8 +187,7 @@ s
         });
 
     }
-}   
-    
+}
 </script>
 
 <template>
@@ -212,6 +215,9 @@ s
         <div class="grid-container">
             <div class="grid-x grid-padding-x">
                 <h1 class="cell auto">New Incident Form</h1>
+            </div>
+            <div class="grid-x">
+                <NewIncidentFormVue :uploadMethod="uploadJSON"/>
             </div>
         </div>
     </div>
