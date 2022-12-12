@@ -12,6 +12,8 @@ export default {
         return {
             view: 'map',
             userSearch: '',
+            userLat:44.949203,
+            userLng: -93.093739,
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -94,13 +96,71 @@ export default {
                 });
             });
         },
-        pressButton(){
-            this.buttonClick = true;
-            console.log(this.userSearch);
-        },
         enter(){
+            $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
+            $(".leaflet-pane.leaflet-shadow-pane").remove();
             console.log(this.userSearch);
+            //this.leaflet.map.setView(latlng)
+            var searchResult = this.userSearch;
+            let newLat = 0;
+            let newLng = 0;
+            var latlng_obj;
+            this.getJSON('https://nominatim.openstreetmap.org/search?q=' + searchResult + '&format=json&limit=25&accept-language=en').then((result) => {
+                // St. Paul GeoJSON
+                //console.log(result);
+                this.userLat = Number(result[0].lat);
+                this.userLng = Number(result[0].lon);
+                newLat = this.userLat;
+                newLng = this.userLng;
+
+                if(newLat > 45.008206 || newLat < 44.883658){
+                    console.log('Address is not within bounds')
+                    var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
+s
+                }else if(newLng > -92.993787 || newLng < -93.217977){
+                    console.log('Address is not within bounds')
+                    var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
+                }else{
+                    var popup = L.popup().setLatLng([newLat, newLng]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
+                    this.leaflet.map.panTo([newLat,newLng]);
+                }   
+            }).catch((error) => {
+                console.log('Error:', error);
+                var popup = L.popup().setLatLng(this.leaflet.center).setContent('Error. Please try again.').openOn(this.leaflet.map);
+            });
+
+        },
+        mouseClick(){
+            function getJSON(url) {
+                return new Promise((resolve, reject) => {
+                    $.ajax({
+                        dataType: 'json',
+                        url: url,
+                        success: (response) => {
+                            resolve(response);
+                        },
+                        error: (status, message) => {
+                            reject({status: status.status, message: status.statusText});
+                        }
+                    });
+                });
+            }
+            function getAddress(search){
+                getJSON('https://nominatim.openstreetmap.org/search?q=' + search + '&format=json&limit=25&accept-language=en').then((result) => {
+                    console.log(this.leaflet.center);
+                    L.popup().setLatLng([result[0].lat,result[0].lon]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
+                });
+            } 
+            this.leaflet.map.on('click', function(ev) {
+                var clickLat = String(ev.latlng.lat);
+                var clickLng = String(ev.latlng.lat);
+                var searchResult = clickLat + "," + clickLng;
+                
+                getAddress(searchResult, ev.latlng);
+            });
+            
         }
+
     },
     mounted() {
         this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom);
@@ -110,11 +170,12 @@ export default {
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-        //var marker = L.marker([44.949203, -93.093739]).addTo(this.leaflet.mapmap);
+        
 
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
+
 
         this.getJSON('/data/StPaulDistrictCouncil.geojson').then((result) => {
             // St. Paul GeoJSON
@@ -124,6 +185,7 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
+
     }
 }
 </script>
@@ -140,11 +202,11 @@ export default {
         <div class="grid-container">
             <br />
             <input id = 'InputID' v-model = "userSearch" placeholder="Search Here" />
-            <button onclick="document.getElementById('InputID').value = ''" type = 'button' class = 'button' @click="enter">Enter</button>
+            <button onclick="document.getElementById('InputID').value = ''" type = 'button' class = 'button' @click="enter" @keyup.enter="enter"> Go</button>
 
 
             <div class="grid-x grid-padding-x">
-                <div id="leafletmap" class="cell auto"></div>
+                <div @click="mouseClick" id="leafletmap" class="cell auto"></div>
             </div>
         </div>
     </div>
