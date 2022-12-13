@@ -212,7 +212,7 @@ s
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue/>
+                <GetIncidentsFormVue :getJson="getJSON"/>
             </div>
         </div>
     </div>

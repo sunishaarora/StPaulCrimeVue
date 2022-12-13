@@ -122,20 +122,27 @@
         </div>
     </fieldset>
 
-    <button class="button">Update</button>
+    <button class="button" @click="getData">Update</button>
+
+    {{ data }}
 </template>
 
 <script>
     export default {
+        props: {
+            getJson: Function
+        },
+
         data() {
             return {
+                data: [],
                 incident_type: [],
                 neighborhood_number: [],
                 start_date: "",
                 end_date: "",
                 start_time: "",
                 end_time: "",
-                limit: 1000
+                limit: ""
             }
         },
 
@@ -158,16 +165,8 @@
                 return numbers;
             },
 
-            start_date_time() {
-                return this.start_date + "T" + this.start_time;
-            },
-
-            end_date_time() {
-                return this.end_date + "T" + this.end_time;
-            },
-
             query() {
-                let query = "";
+                let query = "http://localhost:8000/incidents";
                 let clause = "?"
 
                 if (this.incident_type.length > 0) {
@@ -180,7 +179,45 @@
                     clause = "&";
                 }
 
+                if (this.start_date !== "") {
+                    query += clause + "start_date=" + this.start_date;
+                    clause = "&";
+                }
+
+                if (this.end_date !== "") {
+                    query += clause + "end_date=" + this.end_date;
+                    clause = "&";
+                }
+
+                if (this.start_time !== "") {
+                    query += clause + "start_time=" + this.start_time;
+                    clause = "&";
+                }
+
+                if (this.end_time !== "") {
+                    query += clause + "end_time=" + this.end_time;
+                    clause = "&";
+                }
+
+                if (this.limit !== "") {
+                    query += clause + "limit=" + this.limit;
+                    clause = "&";
+                }
+
                 return query;
+            }
+        },
+
+        methods: {
+            getData() {
+                this.getJson(this.query)
+                .then((res) => {
+                    console.log("Data", res);
+                    this.data = res;
+                })
+                .catch((err) => {
+
+                })
             }
         }
     }
