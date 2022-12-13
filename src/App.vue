@@ -111,7 +111,6 @@ export default {
                 if(newLat > 45.008206 || newLat < 44.883658){
                     console.log('Address is not within bounds')
                     var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
-s
                 }else if(newLng > -92.993787 || newLng < -93.217977){
                     console.log('Address is not within bounds')
                     var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);

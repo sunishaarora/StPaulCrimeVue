@@ -49,7 +49,7 @@
 
     export default {
         props: {
-            uploadMethod: () => {}
+            uploadMethod: Function
         },
 
         data() {
