@@ -211,7 +211,7 @@ s
                 <div @click="mouseClick" id="leafletmap" class="cell auto"></div>
             </div>
 
-            <div class="grid-x">
+            <div class="grid-x grid-padding-x">
                 <GetIncidentsFormVue/>
             </div>
         </div>
