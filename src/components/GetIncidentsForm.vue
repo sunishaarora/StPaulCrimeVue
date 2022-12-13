@@ -1,0 +1,8 @@
+<template>
+    <fieldset class="fieldset">
+        <legend>Incident Type</legend>
+        <input id="checkbox12" type="checkbox"><label for="checkbox12">Checkbox 1</label>
+        <input id="checkbox22" type="checkbox"><label for="checkbox22">Checkbox 2</label>
+        <input id="checkbox32" type="checkbox"><label for="checkbox32">Checkbox 3</label>
+    </fieldset>
+</template>

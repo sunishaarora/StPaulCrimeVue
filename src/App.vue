@@ -1,17 +1,17 @@
 <script>
 import $ from 'jquery'
-import NewIncidentFormVue from '../components/NewIncidentForm.vue';
+import NewIncidentFormVue from './components/NewIncidentForm.vue';
+import GetIncidentsFormVue from './components/GetIncidentsForm.vue';
 //import SearchResult from './components/SearchResult.vue'
-
 export default {
     components: {
-        NewIncidentFormVue
+        NewIncidentFormVue,
+        GetIncidentsFormVue
     },
-
     data() {
         return {
             view: 'map',
-            userSearch: '',
+            userSearch: '44.955139, -93.102222 ',
             userLat:44.949203,
             userLng: -93.093739,
             codes: [],
@@ -55,15 +55,12 @@ export default {
         viewMap(event) {
             this.view = 'map';
         },
-
         viewNewIncident(event) {
             this.view = 'new_incident';
         },
-
         viewAbout(event) {
             this.view = 'about';
         },
-
         getJSON(url) {
             return new Promise((resolve, reject) => {
                 $.ajax({
@@ -78,7 +75,6 @@ export default {
                 });
             });
         },
-
         uploadJSON(method, url, data) {
             return new Promise((resolve, reject) => {
                 $.ajax({
@@ -112,7 +108,6 @@ export default {
                 this.userLng = Number(result[0].lon);
                 newLat = this.userLat;
                 newLng = this.userLng;
-
                 if(newLat > 45.008206 || newLat < 44.883658){
                     console.log('Address is not within bounds')
                     var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
@@ -123,12 +118,11 @@ s
                 }else{
                     var popup = L.popup().setLatLng([newLat, newLng]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
                     this.leaflet.map.panTo([newLat,newLng]);
-                }   
+                }
             }).catch((error) => {
                 console.log('Error:', error);
                 var popup = L.popup().setLatLng(this.leaflet.center).setContent('Error. Please try again.').openOn(this.leaflet.map);
             });
-
         },
         mouseClick(){
             function getJSON(url) {
@@ -150,17 +144,30 @@ s
                     console.log(this.leaflet.center);
                     L.popup().setLatLng([result[0].lat,result[0].lon]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
                 });
-            } 
+            }
             this.leaflet.map.on('click', function(ev) {
                 var clickLat = String(ev.latlng.lat);
                 var clickLng = String(ev.latlng.lat);
                 var searchResult = clickLat + "," + clickLng;
-                
                 getAddress(searchResult, ev.latlng);
             });
-            
-        }
+        },
+        load(event){
+            let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
+            this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
+                    console.log(this.leaflet.center);
+                    this.userSearch = result[0]['display_name']
+                });
 
+        },
+        onMoveEnd(event){
+            let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
+            this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
+                    console.log(this.leaflet.center);
+                    this.userSearch = result[0]['display_name']
+                });
+
+        }
     },
     mounted() {
         this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom);
@@ -170,13 +177,12 @@ s
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-        
 
+        this.leaflet.map.on('load', this.OnLoad);
+        this.leaflet.map.on('moveend', this.onMoveEnd);
 
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
-
-
         this.getJSON('/data/StPaulDistrictCouncil.geojson').then((result) => {
             // St. Paul GeoJSON
             $(result.features).each((key, value) => {
@@ -185,7 +191,6 @@ s
         }).catch((error) => {
             console.log('Error:', error);
         });
-
     }
 }
 </script>
@@ -201,12 +206,16 @@ s
     <div v-show="view === 'map'">
         <div class="grid-container">
             <br />
-            <input id = 'InputID' v-model = "userSearch" placeholder="Search Here" />
+            <input style = 'width: 800px;' id = 'InputID' v-model = "userSearch" placeholder="Search Here" />
             <button onclick="document.getElementById('InputID').value = ''" type = 'button' class = 'button' @click="enter" @keyup.enter="enter"> Go</button>
 
 
             <div class="grid-x grid-padding-x">
                 <div @click="mouseClick" id="leafletmap" class="cell auto"></div>
+            </div>
+
+            <div class="grid-x">
+                <GetIncidentsFormVue/>
             </div>
         </div>
     </div>
@@ -235,7 +244,6 @@ s
 #leafletmap {
     height: 500px;
 }
-
 .selected {
     background-color: rgb(10, 100, 126);
     color: white;
