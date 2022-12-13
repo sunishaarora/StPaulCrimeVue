@@ -1,11 +1,13 @@
 <script>
 import $ from 'jquery'
-import NewIncidentFormVue from '../components/NewIncidentForm.vue';
+import NewIncidentFormVue from './components/NewIncidentForm.vue';
+import GetIncidentsFormVue from './components/GetIncidentsForm.vue';
 //import SearchResult from './components/SearchResult.vue'
 
 export default {
     components: {
-        NewIncidentFormVue
+        NewIncidentFormVue,
+        GetIncidentsFormVue
     },
 
     data() {
@@ -123,7 +125,7 @@ s
                 }else{
                     var popup = L.popup().setLatLng([newLat, newLng]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
                     this.leaflet.map.panTo([newLat,newLng]);
-                }   
+                }
             }).catch((error) => {
                 console.log('Error:', error);
                 var popup = L.popup().setLatLng(this.leaflet.center).setContent('Error. Please try again.').openOn(this.leaflet.map);
@@ -150,15 +152,15 @@ s
                     console.log(this.leaflet.center);
                     L.popup().setLatLng([result[0].lat,result[0].lon]).setContent(result[0]['display_name']).openOn(this.leaflet.map);
                 });
-            } 
+            }
             this.leaflet.map.on('click', function(ev) {
                 var clickLat = String(ev.latlng.lat);
                 var clickLng = String(ev.latlng.lat);
                 var searchResult = clickLat + "," + clickLng;
-                
+
                 getAddress(searchResult, ev.latlng);
             });
-            
+
         }
 
     },
@@ -170,7 +172,7 @@ s
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-        
+
 
 
         let district_boundary = new L.geoJson();
@@ -207,6 +209,10 @@ s
 
             <div class="grid-x grid-padding-x">
                 <div @click="mouseClick" id="leafletmap" class="cell auto"></div>
+            </div>
+
+            <div class="grid-x">
+                <GetIncidentsFormVue/>
             </div>
         </div>
     </div>
