@@ -213,8 +213,8 @@ export default {
                 <div @click="mouseClick" id="leafletmap" class="cell auto"></div>
             </div>
 
-            <div class="grid-x">
-                <GetIncidentsFormVue/>
+            <div class="grid-x grid-padding-x">
+                <GetIncidentsFormVue :getJson="getJSON"/>
             </div>
         </div>
     </div>
