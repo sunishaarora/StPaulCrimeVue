@@ -87,7 +87,7 @@ export default {
                         resolve(response);
                     },
                     error: (status, message) => {
-                        reject({status: status.status, message: status.statusText});
+                        reject({status: status.status, message: status.responseText});
                     }
                 });
             });
