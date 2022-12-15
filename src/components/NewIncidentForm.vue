@@ -74,11 +74,10 @@
                 } else {
                     this.uploadMethod("PUT", "http://localhost:8000/new-incident", this.data)
                     .then((res)=>{
-                        window.alert("Submit new incident successful");
+                        window.alert(res);
                     })
                     .catch((err)=>{
-                        console.log("There's an error!");
-                        window.alert("Something went wrong!");
+                        window.alert(err.message);
                     })
                 }
             }
