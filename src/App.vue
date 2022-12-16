@@ -12,8 +12,7 @@ export default {
         return {
             view: 'map',
             userSearch: '44.955139, -93.102222 ',
-            userLat:44.949203,
-            userLng: -93.093739,
+            currentCoordinates: [44.955139,-93.102222],
             codes: [],
             neighborhoods: [],
             incidents: [],
@@ -104,10 +103,9 @@ export default {
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + searchResult + '&format=json&limit=25&accept-language=en').then((result) => {
                 // St. Paul GeoJSON
                 //console.log(result);
-                this.userLat = Number(result[0].lat);
-                this.userLng = Number(result[0].lon);
-                newLat = this.userLat;
-                newLng = this.userLng;
+                newLat= Number(result[0].lat);
+                newLng = Number(result[0].lon);
+
                 if(newLat > 45.008206 || newLat < 44.883658){
                     console.log('Address is not within bounds')
                     var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
@@ -164,6 +162,8 @@ export default {
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
                     console.log(this.leaflet.center);
                     this.userSearch = result[0]['display_name']
+                    this.currentCoordinates[0] = result[0].lat;
+                    this.currentCoordinates[1] = result[0].lon;
                 });
 
         }
@@ -207,6 +207,8 @@ export default {
             <br />
             <input style = 'width: 800px;' id = 'InputID' v-model = "userSearch" placeholder="Search Here" />
             <button onclick="document.getElementById('InputID').value = ''" type = 'button' class = 'button' @click="enter" @keyup.enter="enter"> Go</button>
+
+            <p> Latitude: {{currentCoordinates[0]}}, Longitude: {{currentCoordinates[1]}}</p>
 
 
             <div class="grid-x grid-padding-x">
