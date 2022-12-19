@@ -356,6 +356,7 @@ export default {
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log('HELLO')
+      deleteItem(case_number);
       alert('Incident #' + String(case_number) + ' has been deleted')
   },
   checkIncidentType(item) {
