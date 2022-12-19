@@ -27,6 +27,8 @@ export default {
                 },
                 zoom: 12,
                 bounds: {
+
+
                     nw: {lat: 45.008206, lng: -93.217977},
                     se: {lat: 44.883658, lng: -92.993787}
                 },
@@ -192,6 +194,10 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
+
+      // this.$root.$on('GetIncidentsForm', () => {
+      //   this.c1method();
+      // })
     }
 }
 </script>
@@ -218,7 +224,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON"/>
+                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON"/>
             </div>
         </div>
     </div>
