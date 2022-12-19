@@ -220,6 +220,20 @@ export default {
             return r1;
           })
         });
+/*
+        let leafletIcon = L.icon({
+                      iconUrl: '/imgs/neighborhoodPins.png',
+                      iconSize:[38,45],
+                      iconAnchor:[20,75],
+                      popupAnchor: [0,-80]
+                    })
+          L.marker([44.942068, -93.020521],{icon: leafletIcon}).addTo(this.leaflet.map)
+                  .bindPopup('TEst')
+                  .openPopup();
+                  L.DomEvent.on(popupButton, 'click', () => {
+                    this.removeMarkers(item);
+                  });
+    */s
 
   },
   data() {

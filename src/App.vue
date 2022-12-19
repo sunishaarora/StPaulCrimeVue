@@ -148,7 +148,7 @@ export default {
                 getAddress(searchResult, ev.latlng);
             });
         },
-        load(event){
+        load(){
             console.log('Load');
             let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
@@ -187,6 +187,7 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
+
       // this.$root.$on('GetIncidentsForm', () => {
       //   this.c1method();
       // })
