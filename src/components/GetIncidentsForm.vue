@@ -264,7 +264,7 @@ export default {
       }
 
       if (this.neighborhood_number.length > 0) {
-        query += clause + "neighborhood_number=" + this.neighborhood_numbers;
+        query += clause + "neighborhood=" + this.neighborhood_numbers;
         clause = "&";
       }
 
