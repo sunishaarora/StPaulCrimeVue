@@ -294,21 +294,19 @@ export default {
     },
 
     computedData() {
-      //console.log("Nice location", this.niceLocation(this.data[2].block));
       let newData = [];
       for (let i=0; i<this.data.length; i++) {
         let incidentLocation = this.niceLocation(this.data[i].block);
-        // this.getJson('https://nominatim.openstreetmap.org/search?q=' + incidentLocation + '&format=json&limit=25&accept-language=en')
-        // .then((res)=>{
-        //   //console.log("Incident location", res);
-        //   let lat = res[0].lat;
-        //   let lng = res[0].lng;
-        //   if (lat < this.leaflet.currentBounds.northEast.lat && lat > this.leaflet.currentBounds.southWest.lat) {
-        //     if (lng < this.leaflet.currentBounds.northEast.lng && lng > this.leaflet.currentBounds.southWest.lng) {
-        //       newData.push(this.data[i]);
-        //     }
-        //   }
-        // })
+        this.getJson('https://nominatim.openstreetmap.org/search?q=' + incidentLocation + '&format=json&limit=25&accept-language=en')
+        .then((res)=>{
+          let lat = res[0].lat;
+          let lng = res[0].lng;
+          if (lat < this.leaflet.currentBounds.northEast.lat && lat > this.leaflet.currentBounds.southWest.lat) {
+            if (lng < this.leaflet.currentBounds.northEast.lng && lng > this.leaflet.currentBounds.southWest.lng) {
+              newData.push(this.data[i]);
+            }
+          }
+        })
       }
       return newData;
     }
