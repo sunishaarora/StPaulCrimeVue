@@ -197,7 +197,7 @@ export default {
   beforeMount() {
     this.getData();
     this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
-      console.log("Data", res2);
+      //console.log("Data", res2);
       this.data.map(r => {
         let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
         r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
@@ -212,7 +212,7 @@ export default {
             return r1;
           })
           // this.incident_type = res;
-          console.log("HELLO", res);
+          //console.log("HELLO", res);
         });
 
     //this.getData3();
@@ -357,21 +357,15 @@ export default {
 
 
                     L.marker([latitude,longitude],{icon: leafletIcon}).addTo(this.leaflet.map)
-                  .bindPopup('Date: ' + date  + '<br>Time: ' + time  + '<br>Incident: ' + incident + '<br><br><center><button @click="removeMarkers" type = "button" class = "button" id ="popupButton"> Delete Incident </button>')
+                  .bindPopup('Date: ' + date  + '<br>Time: ' + time  + '<br>Incident: ' + incident + '<br><br><center><button @click="deleteIncident" type = "button" class = "button" id ="popupButton"> Delete Incident </button>')
                   .openPopup();
                   L.DomEvent.on(popupButton, 'click', () => {
-                    this.removeMarkers(case_number);
+                    this.deleteIncident(case_number);
                   });
 
                 });
 
     },
-    removeMarkers(case_number){
-      $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
-      $(".leaflet-pane.leaflet-shadow-pane").remove();
-      console.log('HELLO')
-      alert('Incident #' + String(case_number) + ' has been deleted')
-  },
     checkIncidentType(item) {
       if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
@@ -384,6 +378,7 @@ export default {
         return "blue";
       }
     }
+
 
   }
 }
