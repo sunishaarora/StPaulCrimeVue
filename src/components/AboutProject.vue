@@ -65,12 +65,29 @@
 
     <h2>Interesting Things We Learned</h2>
     <ol>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
-        <li></li>
+        <li>
+            There are 151 rape incidents from 12 PM - 3 PM, 154 rape incidents  from 9 PM - midnight, and 146 rape incidents from midnight - 3 AM.
+            The number of rape incidents are surprisingly similar at these 3-hour time ranges of the day.
+        </li>
+        <li>
+            The number of robbery incidents that happen at from 9 PM - midnight (855 incidents) are about the same as the number of
+            roberry incidents from 8 AM - 4 PM during the day.
+        </li>
+        <li>
+            Burglary incidents happened the most at Payne/Phalen neighborhood with 2201 incidents,
+            while there're only 500 burglary incidents at Capital River neighborhood.
+        </li>
+        <li>
+            Most incidents occurring around campus (Summit/University) are property crimes (usually theft).
+            There are very few violent crimes in the area (fortunately).
+        </li>
+        <li>
+            Auto Theft Incident are very common in the Summit/University neighborhoods.
+            From March 2022 to May 2022 there were over a 1000 incidents. This is more than 10 incidents a day.
+        </li>
+        <li>
+            The highest cause of assault is domestic assault. On average, there are about 5 or 6 assault cases every day.
+        </li>
     </ol>
 </template>
 
