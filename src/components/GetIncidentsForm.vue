@@ -153,8 +153,8 @@
     <tr v-if="([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
         600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
-        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1)"
-        class="yellow">
+        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1 )"
+        class="yellow" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -166,7 +166,7 @@
       <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
       <tr v-else-if="([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1)"
-          class="red">
+          class="red" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -177,7 +177,7 @@
       <td>{{ item.time }}</td>
         <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
-      <tr v-else class="blue">
+      <tr v-else class="blue" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -198,11 +198,13 @@
 export default {
   props: {
     uploadMethod: Function,
-    getJson: Function
+    getJson: Function,
+    leaflet: Object
   },
-
   beforeMount() {
     this.getData();
+  },
+  mounted(){
     this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
       this.data.map(r => {
         let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
@@ -218,8 +220,9 @@ export default {
             return r1;
           })
         });
-  },
 
+
+  },
   data() {
     return {
       data: [],
@@ -234,7 +237,6 @@ export default {
       incident_type_data: []
     }
   },
-
   computed: {
     code() {
       let codes = "";
@@ -244,7 +246,6 @@ export default {
       codes = codes.substring(0, codes.length - 1);
       return codes;
     },
-
     neighborhood_numbers() {
       let numbers = "";
       for (let i = 0; i < this.neighborhood_number.length; i++) {
@@ -253,52 +254,40 @@ export default {
       numbers = numbers.substring(0, numbers.length - 1);
       return numbers;
     },
-
     query() {
       let query = "http://localhost:8000/incidents";
       let clause = "?"
-
       if (this.incident_type.length > 0) {
         query += clause + "code=" + this.code;
         clause = "&";
       }
-
       if (this.neighborhood_number.length > 0) {
         query += clause + "neighborhood=" + this.neighborhood_numbers;
         clause = "&";
       }
-
       if (this.start_date !== "") {
         query += clause + "start_date=" + this.start_date;
         clause = "&";
       }
-
       if (this.end_date !== "") {
         query += clause + "end_date=" + this.end_date;
         clause = "&";
       }
-
       if (this.start_time !== "") {
         query += clause + "start_time=" + this.start_time;
         clause = "&";
       }
-
       if (this.end_time !== "") {
         query += clause + "end_time=" + this.end_time;
         clause = "&";
       }
-
       if (this.limit !== "") {
         query += clause + "limit=" + this.limit;
         clause = "&";
       }
-
       return query;
     },
-
-
   },
-
   methods: {
     getData() {
       this.getJson(this.query)
@@ -306,10 +295,8 @@ export default {
             this.data = res;
           })
           .catch((err) => {
-
           })
     },
-
     deleteItem(item) {
       this.uploadMethod("DELETE", "http://localhost:8000/remove-incident", item)
           .then((res) => {
@@ -320,40 +307,117 @@ export default {
             console.log("There's an error!");
             window.alert("Something went wrong!");
           })
+    },
+    placeMarker(item){
+      let date = item.date;
+      let time = item.time;
+      let incident = item.incident;
+      let location = item.block;
+      let case_number = item.case_number;
+      $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
+      $(".leaflet-pane.leaflet-shadow-pane").remove();
+      console.log(date);
+      console.log(time);
+      console.log(incident);
+      console.log(location);
+      console.log(case_number);
+      console.log(item.neighborhood_name)
+      let locationSplit = location.split(" ");
+      if(locationSplit[0].includes("X") || locationSplit[0].includes('x')){
+        let alteredAddress = locationSplit[0].replaceAll("X","0");
+        alteredAddress = alteredAddress.replaceAll('x','0');
+        locationSplit[0] = alteredAddress;
+      }
+      let fullAddress = '';
+      for(let i =0; i<locationSplit.length;i++){
+        fullAddress += locationSplit[i] + ' ';
+      }
+      fullAddress += ', St.Paul, MN'
+      this.getJson('https://nominatim.openstreetmap.org/search?q=' + fullAddress + '&format=json&limit=25&accept-language=en').then((result) => {
+                    //console.log(result);
+                    if(result.length === 0){
+                      alert("This row is invalid\nPlease try again.");
+                      return;
+                    }
+                    let latitude = Number(result[0].lat);
+                    let longitude = Number(result[0].lon);
+                    if(latitude < 44.8883383134382 || latitude > 44.99159144730164){ 
+                        alert("This row is invalid");
+                        return;
+                    }
+                
+                    if(longitude < -93.20744225904383 || longitude > -93.0043790042584){
+                        alert("This row is invalid");
+                        return;
+                    }
+                    let leafletIcon = L.icon({
+                      iconUrl: '/imgs/crimeIcon.png',
+                      iconSize:[38,45],
+                      iconAnchor:[20,75],
+                      popupAnchor: [0,-80]
+                    })
+                    L.marker([latitude,longitude],{icon: leafletIcon}).addTo(this.leaflet.map)
+                  .bindPopup('Date: ' + date  + '<br>Time: ' + time  + '<br>Incident: ' + incident + '<br><br><center><button @click="removeMarkers" type = "button" class = "button" id ="popupButton"> Delete Incident </button>')
+                  .openPopup();
+                  L.DomEvent.on(popupButton, 'click', () => {
+                    this.removeMarkers(item);
+                  });
+                });
+    },
+    removeMarkers(item){
+      $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
+      $(".leaflet-pane.leaflet-shadow-pane").remove();
+      this.deleteItem(item);
+      //alert('Incident #' + String(case_number) + ' has been deleted')
+  },
+  deleteItem(item) {
+      this.uploadMethod("DELETE", "http://localhost:8000/remove-incident", item)
+          .then((res) => {
+            window.location.reload();
+            window.alert("removed incident successfully");
+          })
+          .catch((err) => {
+            console.log("There's an error!");
+            window.alert("Something went wrong!");
+          })
+    },
+  checkIncidentType(item) {
+      if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
+        500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
+        600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
+        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1) {
+        return "yellow";
+      } else if([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1) {
+        return "red";
+      } else {
+        return "blue";
+      }
     }
   }
 }
-
 </script>
 
 <style>
 .fieldset {
   width: 100%;
 }
-
 .fieldset span {
   display: block;
   float: left;
 }
-
 .date input, .time input, .limit input {
   width: 75%;
 }
-
 .red {
   background-color: #ff8a8a;
 }
-
 .yellow {
   background-color: #ffff9f;
 }
-
 .blue {
   background-color: #89cff0;
 }
-
 .legend { list-style: none; }
 .legend li { float: left; margin-right: 10px; }
 .legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
-
 </style>
