@@ -142,7 +142,7 @@
     <th>Time</th>
     </thead>
     <tbody>
-    <tr v-for="(item) in data">
+    <tr v-for="(item) in data" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)" >
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -159,7 +159,8 @@
 <script>
 export default {
   props: {
-    getJson: Function
+    getJson: Function,
+    leaflet: Object
   },
 
   beforeMount() {
@@ -176,7 +177,8 @@ export default {
       end_date: "",
       start_time: "",
       end_time: "",
-      limit: ""
+      limit: "",
+      selectedIncident: ""
     }
   },
 
@@ -355,6 +357,69 @@ export default {
 
           })
 
+    },
+    placeMarker(date, time, incident, location, case_number){
+      $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
+      $(".leaflet-pane.leaflet-shadow-pane").remove();
+      console.log(date);
+      console.log(time);
+      console.log(incident);
+
+      let locationSplit = location.split(" ");
+      if(locationSplit[0].includes("X") || locationSplit[0].includes('x')){
+        let alteredAddress = locationSplit[0].replaceAll("X","0");
+        alteredAddress = alteredAddress.replaceAll('x','0');
+        locationSplit[0] = alteredAddress;
+      }
+
+      let fullAddress = '';
+      for(let i =0; i<locationSplit.length;i++){
+        fullAddress += locationSplit[i] + ' ';
+      }
+      fullAddress += ', St.Paul, MN'
+
+
+      this.getJson('https://nominatim.openstreetmap.org/search?q=' + fullAddress + '&format=json&limit=25&accept-language=en').then((result) => {
+                    //console.log(result);
+                    if(result.length === 0){
+                      alert("This row is invalid\nPlease try again.");
+                      return;
+                    }
+                    let latitude = Number(result[0].lat);
+                    let longitude = Number(result[0].lon);
+                    if(latitude < 44.8883383134382 || latitude > 44.99159144730164){ 
+                        alert("This row is invalid");
+                        return;
+                    }
+                
+                    if(longitude < -93.20744225904383 || longitude > -93.0043790042584){
+                        alert("This row is invalid");
+                        return;
+                    }
+
+                    let leafletIcon = L.icon({
+                      iconUrl: '/imgs/crimeIcon.png',
+                      iconSize:[38,45],
+                      iconAnchor:[20,75],
+                      popupAnchor: [0,-80]
+                    })
+
+
+                    L.marker([latitude,longitude],{icon: leafletIcon}).addTo(this.leaflet.map)
+                  .bindPopup('Date: ' + date  + '<br>Time: ' + time  + '<br>Incident: ' + incident + '<br><br><center><button @click="removeMarkers" type = "button" class = "button" id ="popupButton"> Delete Incident </button>')
+                  .openPopup();
+                  L.DomEvent.on(popupButton, 'click', () => {
+                    this.removeMarkers(case_number);
+                  });
+
+                });
+
+    },
+    removeMarkers(case_number){
+      $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
+      $(".leaflet-pane.leaflet-shadow-pane").remove();
+      console.log('HELLO')
+      alert('Incident #' + String(case_number) + ' has been deleted')
     }
   }
 }

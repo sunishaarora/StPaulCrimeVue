@@ -214,7 +214,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON"/>
+                <GetIncidentsFormVue :getJson="getJSON" , :leaflet = "this.leaflet" />
             </div>
         </div>
     </div>
@@ -225,7 +225,7 @@ export default {
                 <h1 class="cell auto">New Incident Form</h1>
             </div>
             <div class="grid-x">
-                <NewIncidentFormVue :uploadMethod="uploadJSON"/>
+                <NewIncidentFormVue :uploadMethod="uploadJSON" />
             </div>
         </div>
     </div>
