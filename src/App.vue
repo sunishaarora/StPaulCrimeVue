@@ -26,8 +26,6 @@ export default {
                 },
                 zoom: 12,
                 bounds: {
-
-
                     nw: {lat: 45.008206, lng: -93.217977},
                     se: {lat: 44.883658, lng: -92.993787}
                 },
@@ -49,7 +47,18 @@ export default {
                     {location: [44.913106, -93.170779], marker: null},
                     {location: [44.937705, -93.136997], marker: null},
                     {location: [44.949203, -93.093739], marker: null}
-                ]
+                ],
+                currentBounds: {
+                    northEast: {
+                        lat: 0,
+                        lng: 0
+                    },
+                    southWest: {
+                        lat: 0,
+                        lng: 0,
+                    }
+                }
+
             }
         };
     },
@@ -103,6 +112,7 @@ export default {
             let newLat = 0;
             let newLng = 0;
             var latlng_obj;
+            console.log('nominatim api: ' + 'https://nominatim.openstreetmap.org/search?q=' + searchResult + '&format=json&limit=25&accept-language=en');
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + searchResult + '&format=json&limit=25&accept-language=en').then((result) => {
                 // St. Paul GeoJSON
                 //console.log(result);
@@ -168,6 +178,13 @@ export default {
                     this.userSearch = result[0]['display_name']
                 });
 
+            console.log("New bounds: ", this.leaflet.map.getBounds());
+            let newBounds = this.leaflet.map.getBounds();
+            console.log(newBounds._northEast.lat);
+            this.leaflet.currentBounds.northEast.lat = newBounds._northEast.lat;
+            this.leaflet.currentBounds.northEast.lng = newBounds._northEast.lng;
+            this.leaflet.currentBounds.southWest.lat = newBounds._southWest.lat;
+            this.leaflet.currentBounds.southWest.lng = newBounds._southWest.lng;
         }
     },
     mounted() {
@@ -220,7 +237,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON" , :leaflet = "this.leaflet" />
+                <GetIncidentsFormVue :getJson="getJSON" , :leaflet = "leaflet" />
             </div>
         </div>
     </div>

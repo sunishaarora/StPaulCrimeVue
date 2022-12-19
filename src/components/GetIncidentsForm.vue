@@ -128,8 +128,6 @@
 
   <button class="button" @click="getData">Update</button>
 
-  <!--  {{ data }}-->
-
   <table>
     <thead>
     <th>Case Number</th>
@@ -141,7 +139,7 @@
     <th>Date</th>
     <th>Time</th>
     </thead>
-    <tbody>s
+    <tbody>
 
 
     <span v-for="(item) in data">
@@ -295,7 +293,25 @@ export default {
       return query;
     },
 
-
+    computedData() {
+      //console.log("Nice location", this.niceLocation(this.data[2].block));
+      let newData = [];
+      for (let i=0; i<this.data.length; i++) {
+        let incidentLocation = this.niceLocation(this.data[i].block);
+        // this.getJson('https://nominatim.openstreetmap.org/search?q=' + incidentLocation + '&format=json&limit=25&accept-language=en')
+        // .then((res)=>{
+        //   //console.log("Incident location", res);
+        //   let lat = res[0].lat;
+        //   let lng = res[0].lng;
+        //   if (lat < this.leaflet.currentBounds.northEast.lat && lat > this.leaflet.currentBounds.southWest.lat) {
+        //     if (lng < this.leaflet.currentBounds.northEast.lng && lng > this.leaflet.currentBounds.southWest.lng) {
+        //       newData.push(this.data[i]);
+        //     }
+        //   }
+        // })
+      }
+      return newData;
+    }
   },
 
   methods: {
@@ -307,6 +323,22 @@ export default {
           .catch((err) => {
 
           })
+    },
+
+    niceLocation(location) {
+      let locationSplit = location.split(" ");
+      if(locationSplit[0].includes("X") || locationSplit[0].includes('x')){
+        let alteredAddress = locationSplit[0].replaceAll("X","0");
+        alteredAddress = alteredAddress.replaceAll('x','0');
+        locationSplit[0] = alteredAddress;
+      }
+
+      let fullAddress = '';
+      for(let i =0; i<locationSplit.length;i++){
+        fullAddress += locationSplit[i] + ' ';
+      }
+      fullAddress += ', St.Paul, MN';
+      return fullAddress;
     },
 
     placeMarker(date, time, incident, location, case_number){
@@ -338,11 +370,11 @@ export default {
                     }
                     let latitude = Number(result[0].lat);
                     let longitude = Number(result[0].lon);
-                    if(latitude < 44.8883383134382 || latitude > 44.99159144730164){ 
+                    if(latitude < 44.8883383134382 || latitude > 44.99159144730164){
                         alert("This row is invalid");
                         return;
                     }
-                
+
                     if(longitude < -93.20744225904383 || longitude > -93.0043790042584){
                         alert("This row is invalid");
                         return;
@@ -371,7 +403,7 @@ export default {
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log('HELLO')
       alert('Incident #' + String(case_number) + ' has been deleted')
-  },
+    },
     checkIncidentType(item) {
       if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
@@ -384,7 +416,6 @@ export default {
         return "blue";
       }
     }
-
   }
 }
 
