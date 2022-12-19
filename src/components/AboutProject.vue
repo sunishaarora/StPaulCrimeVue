@@ -15,7 +15,7 @@
 
     <div class="grid-x">
         <div class="cell small-12 medium-4">
-            <img src="../images/aashish.jpg" alt="Tina Portrait">
+            <img src="../images/aashish.jpg" alt="Aashish Portrait">
         </div>
         <div class="cell small-12 medium-8">
             <h4>Aashish Bharath</h4>
@@ -30,12 +30,15 @@
 
     <div class="grid-x">
         <div class="cell small-12 medium-4">
-            <img src="../images/tina.jpg" alt="Tina Portrait">
+            <img src="../images/sunisha.jpg" alt="Sunisha Portrait">
         </div>
         <div class="cell small-12 medium-8">
             <h4>Sunisha Arora</h4>
             <p>
-                Sunisha Arora
+                Name: Sunisha Arora <br>
+                Year: Senior <br>
+                Major: Computer Science and Data Analytics (Economics) <br>
+                Hometown: Bhopal, India <br>
             </p>
         </div>
     </div>
