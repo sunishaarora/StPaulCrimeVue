@@ -141,10 +141,17 @@
     <th>Date</th>
     <th>Time</th>
     </thead>
-    <tbody>
-    <tr v-for="(item) in data" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)" >
-      <td>{{ item.case_number }}</td>
-      <td>{{ item.incident_type }}</td>
+    <tbody>s
+
+
+    <span v-for="(item) in data">
+    <tr v-if="([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
+        500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
+        600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
+        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1)" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)" >
+      <td class="yellow">{{ item.case_number }}</td>
+      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+
       <td>{{ item.incident }}</td>
       <td>{{ item.police_grid }}</td>
       <td>{{ item.neighborhood_name }}</td>
@@ -152,6 +159,30 @@
       <td>{{ item.date }}</td>
       <td>{{ item.time }}</td>
     </tr>
+      <tr v-if="([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1)" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)" >
+      <td class="red">{{ item.case_number }}</td>
+      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+      <td>{{ item.incident }}</td>
+      <td>{{ item.police_grid }}</td>
+      <td>{{ item.neighborhood_name }}</td>
+      <td>{{ item.block }}</td>
+      <td>{{ item.date }}</td>
+      <td>{{ item.time }}</td>
+    </tr>
+      <tr v-else @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)" >
+      <td class="blue">{{ item.case_number }}</td>
+      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+      <td>{{ item.incident }}</td>
+      <td>{{ item.police_grid }}</td>
+      <td>{{ item.neighborhood_name }}</td>
+      <td>{{ item.block }}</td>
+      <td>{{ item.date }}</td>
+      <td>{{ item.time }}</td>
+    </tr>
+
+    </span>
+
+
     </tbody>
   </table>
 </template>
@@ -165,6 +196,25 @@ export default {
 
   beforeMount() {
     this.getData();
+    this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
+      console.log("Data", res2);
+      this.data.map(r => {
+        let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
+        r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
+        return r;
+      })
+    })
+    this.getJson("http://localhost:8000/codes")
+        .then((res) => {
+          this.data.map(r1 => {
+            let c_item = res.find(r3 => r1.code === r3.code);
+            r1.incident_type = c_item ? c_item.incident_type : null;
+            return r1;
+          })
+          // this.incident_type = res;
+          console.log("HELLO", res);
+        });
+
     //this.getData3();
   },
 
@@ -178,7 +228,9 @@ export default {
       start_time: "",
       end_time: "",
       limit: "",
-      selectedIncident: ""
+      selectedIncident: "",
+      neighborhood_data: [],
+      incident_type_data: []
     }
   },
 
@@ -250,114 +302,13 @@ export default {
     getData() {
       this.getJson(this.query)
           .then((res) => {
-            this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
-              console.log("Data", res2);
-              res.map(r => {
-                let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
-                r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
-                return r;
-              })
-                  // .then((res) => {
-                  //   this.getJson("http://localhost:8000/codes").then((res3) => {
-                  //     console.log("Data", res3);
-                  //     res.map(r1 => {
-                  //       let c_item = res3.find(r3 => r1.code === r3.code);
-                  //       r1.incident_type = c_item ? c_item.incident_type : null;
-                  //       return r1;
-                  //     })
-                  //   })
-                  //   //this.data = res;
-                  // })
-              console.log("Data", res);
-              this.data = res;
-            })
+            this.data = res;
           })
           .catch((err) => {
 
           })
     },
-    // getData3() {
-    //   //this.getJson(this.query)
-    //   //    .then((res) => {
-    //   this.getData().subscribe((res) => {
-    //         this.getJson("http://localhost:8000/codes").then((res3) => {
-    //           console.log("Data", res3);
-    //           res.map(r1 => {
-    //                   let c_item = res3.find(r3 => r1.code === r3.code);
-    //                   r1.incident_type = c_item ? c_item.incident_type : null;
-    //                   return r1;
-    //                 })
-    //           // .then((res) => {
-    //           //   this.getJson("http://localhost:8000/codes").then((res3) => {
-    //           //     console.log("Data", res3);
-    //           //     res.map(r1 => {
-    //           //       let c_item = res3.find(r3 => r1.code === r3.code);
-    //           //       r1.incident_type = c_item ? c_item.incident_type : null;
-    //           //       return r1;
-    //           //     })
-    //           //   })
-    //           //   //this.data = res;
-    //           // })
-    //           console.log("Data", res);
-    //           this.data = res;
-    //         })
-    //       })
-    //       .catch((err) => {
-    //
-    //       })
-    // },
 
-    getData2() {
-      this.getJson(this.query)
-          .then((res) => {
-            res.pipe(
-                this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
-                  console.log("Data", res2);
-                  //res.map(
-                      map(r => {
-                        let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
-                        r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
-                        return r;
-                      }//)
-                  ),
-                    //  res.map(
-                          map(r1 => {
-                                this.getJson("http://localhost:8000/codes").then((res3) => {
-                                  let c_item = res3.find(r3 => r1.code === r3.code);
-                                  r1.incident_type = c_item ? c_item.incident_type : null;
-                                  return r1;
-                                })
-                              }
-                      //    )
-                      )
-                  // this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
-                  //   console.log("Data", res2);
-                  //   res.map(
-                  //       map(r => {
-                  //         let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
-                  //         r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
-                  //         return r;
-                  //       }),
-                  //       map(r1 => {
-                  //         this.getJson("http://localhost:8000/codes").then((res3) => {
-                  //           let c_item = res3.find(r3 => r1.code === r3.code);
-                  //           r1.incident_type = c_item ? c_item.incident_type : null;
-                  //           return r1;
-                  //         })
-                  //       })
-                  //   )
-                  console.log("Data", res);
-                  this.data = res;
-                  //this.data = res;
-                })
-                    .catch((err) => {
-
-                    })
-            )
-
-          })
-
-    },
     placeMarker(date, time, incident, location, case_number){
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
@@ -420,7 +371,20 @@ export default {
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log('HELLO')
       alert('Incident #' + String(case_number) + ' has been deleted')
+  },
+    checkIncidentType(item) {
+      if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
+        500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
+        600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
+        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1) {
+        return "yellow";
+      } else if([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1) {
+        return "red";
+      } else {
+        return "blue";
+      }
     }
+
   }
 }
 
@@ -438,5 +402,15 @@ export default {
 
 .date input, .time input, .limit input {
   width: 75%;
+}
+
+.red {
+  background-color: lightcoral;
+}
+.yellow {
+  background-color: #ffff9f;
+}
+.blue {
+  background-color: #89cff0;
 }
 </style>
