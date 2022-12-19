@@ -227,7 +227,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON" , :leaflet = "this.leaflet" />
+                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON" , :leaflet = "this.leaflet" />
             </div>
         </div>
     </div>
