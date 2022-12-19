@@ -99,13 +99,12 @@ export default {
             var searchResult = this.userSearch;
             let newLat = 0;
             let newLng = 0;
-            
+            var latlng_obj;
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + searchResult + '&format=json&limit=25&accept-language=en').then((result) => {
                 // St. Paul GeoJSON
                 //console.log(result);
                 newLat= Number(result[0].lat);
                 newLng = Number(result[0].lon);
-
                 if(newLat > 45.008206 || newLat < 44.883658){
                     console.log('Address is not within bounds')
                     var popup = L.popup().setLatLng(this.leaflet.center).setContent('Address is not within bounds').openOn(this.leaflet.map);
@@ -150,19 +149,11 @@ export default {
             });
         },
         load(event){
-            console.log('Hello')
-
-                let neighborhoodIcon = L.icon({
-                      iconUrl: '/imgs/neighborhoodPins.png',
-                      iconSize:[23,30],
-                      iconAnchor:[20,75]
-                    })
-
-                    
-                    L.marker([44.949203, -93.093739],{icon: neighborhoodIcon}).addTo(this.leaflet.map)
-                  .bindPopup('Number of Crimes: ')
-                  .openPopup();
-
+            let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
+            this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
+                    console.log(this.leaflet.center);
+                    this.userSearch = result[0]['display_name']
+                });
         },
         onMoveEnd(event){
             let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
@@ -173,7 +164,6 @@ export default {
                     this.currentCoordinates[1] = result[0].lon;
                 });
         }
-        
     },
     mounted() {
         this.leaflet.map = L.map('leafletmap').setView([this.leaflet.center.lat, this.leaflet.center.lng], this.leaflet.zoom);
@@ -183,10 +173,8 @@ export default {
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-
-        this.leaflet.map.on('load', this.load);
+        this.leaflet.map.on('load', this.OnLoad);
         this.leaflet.map.on('moveend', this.onMoveEnd);
-
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);
         this.getJSON('/data/StPaulDistrictCouncil.geojson').then((result) => {
@@ -197,7 +185,6 @@ export default {
         }).catch((error) => {
             console.log('Error:', error);
         });
-
       // this.$root.$on('GetIncidentsForm', () => {
       //   this.c1method();
       // })
@@ -227,7 +214,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON" , :leaflet = "this.leaflet" />
+                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON" , :leaflet='this.leaflet'/>
             </div>
         </div>
     </div>
@@ -238,7 +225,7 @@ export default {
                 <h1 class="cell auto">New Incident Form</h1>
             </div>
             <div class="grid-x">
-                <NewIncidentFormVue :uploadMethod="uploadJSON" />
+                <NewIncidentFormVue :uploadMethod="uploadJSON"/>
             </div>
         </div>
     </div>
