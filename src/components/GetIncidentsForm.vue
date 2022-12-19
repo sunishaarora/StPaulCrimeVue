@@ -154,7 +154,7 @@
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
         600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
         700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1 )"
-        class="yellow" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)">
+        class="yellow" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -166,7 +166,7 @@
       <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
       <tr v-else-if="([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1)"
-          class="red" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)">
+          class="red" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -177,7 +177,7 @@
       <td>{{ item.time }}</td>
         <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
-      <tr v-else class="blue" @click="placeMarker(item.date,item.time,item.incident, item.block, item.case_number)">
+      <tr v-else class="blue" @click="placeMarker(item)">
       <td>{{ item.case_number }}</td>
       <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
@@ -304,7 +304,12 @@ export default {
             window.alert("Something went wrong!");
           })
     },
-    placeMarker(date, time, incident, location, case_number){
+    placeMarker(item){
+      let date = item.date;
+      let time = item.time;
+      let incident = item.incident;
+      let location = item.location;
+      let case_number = item.case_number;
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log(date);
@@ -348,11 +353,11 @@ export default {
                   .bindPopup('Date: ' + date  + '<br>Time: ' + time  + '<br>Incident: ' + incident + '<br><br><center><button @click="removeMarkers" type = "button" class = "button" id ="popupButton"> Delete Incident </button>')
                   .openPopup();
                   L.DomEvent.on(popupButton, 'click', () => {
-                    this.removeMarkers(case_number);
+                    this.removeMarkers(item);
                   });
                 });
     },
-    removeMarkers(case_number){
+    removeMarkers(item){
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log('HELLO')
