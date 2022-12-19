@@ -214,10 +214,10 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON" , :leaflet='this.leaflet'/>
+                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON" :leaflet='leaflet'/>
             </div>
         </div>
-    </div>
+    </div>s
     <div v-if="view === 'new_incident'">
         <!-- Replace this with your actual form: can be done here or by making a new component -->
         <div class="grid-container">

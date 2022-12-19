@@ -308,13 +308,15 @@ export default {
       let date = item.date;
       let time = item.time;
       let incident = item.incident;
-      let location = item.location;
+      let location = item.block;
       let case_number = item.case_number;
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
       console.log(date);
       console.log(time);
       console.log(incident);
+      console.log(location);
+      console.log(case_number);
       let locationSplit = location.split(" ");
       if(locationSplit[0].includes("X") || locationSplit[0].includes('x')){
         let alteredAddress = locationSplit[0].replaceAll("X","0");
@@ -360,9 +362,20 @@ export default {
     removeMarkers(item){
       $(".leaflet-marker-icon").remove(); $(".leaflet-popup").remove();
       $(".leaflet-pane.leaflet-shadow-pane").remove();
-      console.log('HELLO')
-      alert('Incident #' + String(case_number) + ' has been deleted')
+      this.deleteItem(item);
+      //alert('Incident #' + String(case_number) + ' has been deleted')
   },
+  deleteItem(item) {
+      this.uploadMethod("DELETE", "http://localhost:8000/remove-incident", item)
+          .then((res) => {
+            window.location.reload();
+            window.alert("removed incident successfully");
+          })
+          .catch((err) => {
+            console.log("There's an error!");
+            window.alert("Something went wrong!");
+          })
+    },
   checkIncidentType(item) {
       if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
