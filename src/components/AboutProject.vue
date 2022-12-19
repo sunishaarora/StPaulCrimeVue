@@ -62,6 +62,9 @@
     </p>
 
     <h2>Video Demo</h2>
+    <iframe width="500" height="400"
+        src="https://www.youtube.com/embed/0SnJWiJLPZ8">
+    </iframe>
 
     <h2>Interesting Things We Learned</h2>
     <ol>
