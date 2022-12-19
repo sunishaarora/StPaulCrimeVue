@@ -149,6 +149,7 @@ export default {
             });
         },
         load(event){
+            console.log('Load');
             let current_latLon = String(this.leaflet.map.getCenter().lat) +','+String(this.leaflet.map.getCenter().lng);
             this.getJSON('https://nominatim.openstreetmap.org/search?q=' + current_latLon + '&format=json&limit=25&accept-language=en').then((result) => {
                     console.log(this.leaflet.center);
@@ -173,7 +174,8 @@ export default {
             maxZoom: 18
         }).addTo(this.leaflet.map);
         this.leaflet.map.setMaxBounds([[44.883658, -93.217977], [45.008206, -92.993787]]);
-        this.leaflet.map.on('load', this.OnLoad);
+
+        this.leaflet.map.on('load', this.load);
         this.leaflet.map.on('moveend', this.onMoveEnd);
         let district_boundary = new L.geoJson();
         district_boundary.addTo(this.leaflet.map);

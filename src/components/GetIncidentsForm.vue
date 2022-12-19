@@ -203,6 +203,8 @@ export default {
   },
   beforeMount() {
     this.getData();
+  },
+  mounted(){
     this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
       this.data.map(r => {
         let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
@@ -218,6 +220,7 @@ export default {
             return r1;
           })
         });
+
   },
   data() {
     return {
@@ -317,6 +320,7 @@ export default {
       console.log(incident);
       console.log(location);
       console.log(case_number);
+      console.log(item.neighborhood_name)
       let locationSplit = location.split(" ");
       if(locationSplit[0].includes("X") || locationSplit[0].includes('x')){
         let alteredAddress = locationSplit[0].replaceAll("X","0");
