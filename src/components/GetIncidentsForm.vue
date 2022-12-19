@@ -147,7 +147,7 @@
     <th>Time</th>
     <th>Delete</th>
     </thead>
-    <tbody v-for="(item) in data">
+    <tbody v-for="(item) in computedData">
 
 
     <tr v-if="([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
