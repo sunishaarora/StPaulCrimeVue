@@ -2,11 +2,13 @@
 import $ from 'jquery'
 import NewIncidentFormVue from './components/NewIncidentForm.vue';
 import GetIncidentsFormVue from './components/GetIncidentsForm.vue';
+import AboutProject from './components/AboutProject.vue';
 //import SearchResult from './components/SearchResult.vue'
 export default {
     components: {
         NewIncidentFormVue,
-        GetIncidentsFormVue
+        GetIncidentsFormVue,
+        AboutProject
     },
     data() {
         return {
@@ -228,6 +230,7 @@ export default {
             <div class="grid-x grid-padding-x">
                 <h1 class="cell auto">About the Project</h1>
             </div>
+            <AboutProject/>
         </div>
     </div>
 </template>
