@@ -15,12 +15,15 @@
 
     <div class="grid-x">
         <div class="cell small-12 medium-4">
-            <img src="../images/tina.jpg" alt="Tina Portrait">
+            <img src="../images/aashish.jpg" alt="Tina Portrait">
         </div>
         <div class="cell small-12 medium-8">
             <h4>Aashish Bharath</h4>
             <p>
-                Aashish Brarath
+                My name is Aashish Bharath, and I am a senior at University of St. Thomas.
+                I am majoring in Data Analytics and Economics with a minor in Computer Science.
+                After my graduation in the spring of 2023, I will be working as a Analytics and Data Science ADP at Trane Technologies.
+                In my free time I enjoy hiking, photography, watching movies, and spending time with friends and family.
             </p>
         </div>
     </div>
@@ -38,10 +41,17 @@
     </div>
 
     <h2>Tools/Frameworks</h2>
-    <h4>Leaflet API</h4>
-    <p></p>
-    <h4>Nominatim API</h4>
-    <p></p>
+    <p>
+        To create this website we used a few tools to make development smoother.
+        These tools included frameworks like Foundation for CSS and Vue.js to easily build the user interface and our single page web application.
+    </p>
+    <h4>Project 3 RESTful Server, Leaflet, and Nominatim API</h4>
+    <p>
+        We also used a couple APIs to gather, and visualize the St. Paul Crime Data.
+        First, our data comes from a RESTful API that we built previously.
+        To visualize the incident data we use the Leaflet API to easily visualize crime incidents on a map.
+        And finally we used the Nominatim API which smoothly converts between address and latitude/longitude.
+    </p>
     <h4>Vue.js</h4>
     <p>
         We used Vue.js framework to manage our front-end app structure and logic.
