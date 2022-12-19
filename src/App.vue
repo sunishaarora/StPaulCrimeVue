@@ -220,7 +220,7 @@ export default {
             </div>
 
             <div class="grid-x grid-padding-x">
-                <GetIncidentsFormVue :getJson="getJSON"/>
+                <GetIncidentsFormVue :getJson="getJSON" :uploadMethod="uploadJSON"/>
             </div>
         </div>
     </div>

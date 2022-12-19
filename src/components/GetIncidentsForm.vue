@@ -128,8 +128,13 @@
 
   <button class="button" @click="getData">Update</button>
 
-  <!--  {{ data }}-->
-
+  <div>
+  <ul class="legend">
+    <li><span class="red"></span> Violent Crimes</li>
+    <li><span class="yellow"></span> Property Crimes</li>
+    <li><span class="blue"></span> Other Crimes</li>
+  </ul>
+  </div>
   <table>
     <thead>
     <th>Case Number</th>
@@ -140,45 +145,49 @@
     <th>Block</th>
     <th>Date</th>
     <th>Time</th>
+    <th>Delete</th>
     </thead>
-    <tbody>
+    <tbody v-for="(item) in data">
 
-    <span v-for="(item) in data">
+
     <tr v-if="([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
         500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
         600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
-        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1)">
-      <td class="yellow">{{ item.case_number }}</td>
-      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1)"
+        class="yellow">
+      <td>{{ item.case_number }}</td>
+      <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
       <td>{{ item.police_grid }}</td>
       <td>{{ item.neighborhood_name }}</td>
       <td>{{ item.block }}</td>
       <td>{{ item.date }}</td>
       <td>{{ item.time }}</td>
+      <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
-      <tr v-if="([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1)">
-      <td class="red">{{ item.case_number }}</td>
-      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+      <tr v-else-if="([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1)"
+          class="red">
+      <td>{{ item.case_number }}</td>
+      <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
       <td>{{ item.police_grid }}</td>
       <td>{{ item.neighborhood_name }}</td>
       <td>{{ item.block }}</td>
       <td>{{ item.date }}</td>
       <td>{{ item.time }}</td>
+        <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
-      <tr v-else>
-      <td class="blue">{{ item.case_number }}</td>
-      <td>{{ item.incident_type }} <!--incident_type_data.find(i => item.code === i.code).incident_type }}--></td>
+      <tr v-else class="blue">
+      <td>{{ item.case_number }}</td>
+      <td>{{ item.incident_type }}</td>
       <td>{{ item.incident }}</td>
       <td>{{ item.police_grid }}</td>
       <td>{{ item.neighborhood_name }}</td>
       <td>{{ item.block }}</td>
       <td>{{ item.date }}</td>
       <td>{{ item.time }}</td>
+        <td><button @click = "deleteItem(item)" class="button">DELETE</button></td>
     </tr>
-
-    </span>
 
 
     </tbody>
@@ -188,13 +197,13 @@
 <script>
 export default {
   props: {
+    uploadMethod: Function,
     getJson: Function
   },
 
   beforeMount() {
     this.getData();
     this.getJson("http://localhost:8000/neighborhoods").then((res2) => {
-      console.log("Data", res2);
       this.data.map(r => {
         let n_item = res2.find(r2 => r.neighborhood_number === r2.neighborhood_number);
         r.neighborhood_name = n_item ? n_item.neighborhood_name : null;
@@ -208,11 +217,7 @@ export default {
             r1.incident_type = c_item ? c_item.incident_type : null;
             return r1;
           })
-          // this.incident_type = res;
-          console.log("HELLO", res);
         });
-
-    //this.getData3();
   },
 
   data() {
@@ -305,19 +310,17 @@ export default {
           })
     },
 
-    checkIncidentType(item) {
-      if([300,311,312,313,314,321,322,323,324,331,333,334,341,342,343,344,351,352,353,354,361,363,364,371,372,373,374,
-        500,510,511,513,515,516,520,521,523,525,526,530,531,533,535,536,540,541,543,545,546,550,551,553,555,556,560,561,563,565,566,
-        600,603,611,612,613,614,621,622,623,630,631,632,633,640,641,642,643,651,652,653,661,662,663,671,672,673,681,682,683,691,692,693,
-        700,710,711,712,720,721,722,730,731,732,1400,1401,1410,1415,1416,1420,1425,1426,1430,1435,1436].indexOf(item.code) > -1) {
-        return "yellow";
-      } else if([400,410,411,412,420,421,422,430,431,432,440,441,442,450,451,452,453,810,861,862,863].indexOf(item.code) > -1) {
-        return "red";
-      } else {
-        return "blue";
-      }
+    deleteItem(item) {
+      this.uploadMethod("DELETE", "http://localhost:8000/remove-incident", item)
+          .then((res) => {
+            window.location.reload();
+            window.alert("removed incident successfully");
+          })
+          .catch((err) => {
+            console.log("There's an error!");
+            window.alert("Something went wrong!");
+          })
     }
-
   }
 }
 
@@ -338,12 +341,19 @@ export default {
 }
 
 .red {
-  background-color: lightcoral;
+  background-color: #ff8a8a;
 }
+
 .yellow {
   background-color: #ffff9f;
 }
+
 .blue {
   background-color: #89cff0;
 }
+
+.legend { list-style: none; }
+.legend li { float: left; margin-right: 10px; }
+.legend span { border: 1px solid #ccc; float: left; width: 12px; height: 12px; margin: 2px; }
+
 </style>
